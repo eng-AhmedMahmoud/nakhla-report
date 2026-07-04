@@ -25,8 +25,8 @@ function Section({ k, title, note, children }: { k: string; title: string; note?
 const DEPLOYMENTS: [string, string, React.ReactNode][] = [
   ["Web (marketplace)", "https://collabstr-clone.vercel.app", <Pill key="a" kind="ok">Live</Pill>],
   ["Admin console", "https://nakhla-admin.vercel.app", <Pill key="b" kind="ok">Live</Pill>],
-  ["API (NestJS)", "https://nakhla-api.vercel.app/api/v1/health", <Pill key="c" kind="ok">Live · 200</Pill>],
-  ["Database (Postgres)", "Neon · us-east-2 · migrated + seeded", <Pill key="d" kind="warn">Claim pending</Pill>],
+  ["API (NestJS)", "https://nakhla-api.vercel.app/api/v1/health", <Pill key="c" kind="ok">Live · 200 · moving to VPS</Pill>],
+  ["Database (Postgres)", "Self-host on Hostinger VPS + pgbackrest (planned)", <Pill key="d" kind="warn">Dropping Neon</Pill>],
   ["Source", "github.com/eng-AhmedMahmoud/collabstr-clone", <Pill key="e" kind="ok">Auto-deploy</Pill>],
 ];
 
@@ -82,18 +82,19 @@ const PAYMENTS: [string, string, string][] = [
 
 // ── Next steps ─────────────────────────────────────────────────
 const NEXT: [string, string, React.ReactNode][] = [
-  ["1", "Escrow / payment models + checkout scaffolding", <Pill key="1" kind="brand">Buildable now</Pill>],
-  ["2", "Email verification + password reset flows", <Pill key="2" kind="brand">Buildable now</Pill>],
-  ["3", "Server-side consent log + signup marketing opt-in", <Pill key="3" kind="brand">Buildable now</Pill>],
-  ["4", "Admin mobile responsiveness (tables/drawer)", <Pill key="4" kind="brand">Buildable now</Pill>],
-  ["5", "Provision Hostinger VPS → move API + Postgres", <Pill key="5" kind="warn">Needs VPS IP</Pill>],
-  ["6", "Wire Tap + Tamara + Resend + Unifonic", <Pill key="6" kind="warn">Needs accounts</Pill>],
+  ["1", "Provision Hostinger KVM2 → Postgres 16 + pgbackrest + R2 offsite backup → cut over from Neon", <Pill key="1" kind="warn">Needs VPS IP</Pill>],
+  ["2", "Move NestJS API to same VPS (co-located with DB, no egress, KSA residency)", <Pill key="2" kind="warn">Needs VPS IP</Pill>],
+  ["3", "Escrow / payment models + checkout scaffolding", <Pill key="3" kind="brand">Buildable now</Pill>],
+  ["4", "Email verification + password reset flows", <Pill key="4" kind="brand">Buildable now</Pill>],
+  ["5", "Server-side consent log + signup marketing opt-in", <Pill key="5" kind="brand">Buildable now</Pill>],
+  ["6", "Admin mobile responsiveness (tables/drawer)", <Pill key="6" kind="brand">Buildable now</Pill>],
+  ["7", "Wire Tap + Tamara + Resend + Unifonic", <Pill key="7" kind="warn">Needs accounts</Pill>],
 ];
 
 // ── Accounts to create ─────────────────────────────────────────
 const ACCOUNTS: [string, string, string][] = [
-  ["Hostinger VPS", "New dedicated KVM2 for Nakhla", "hpanel.hostinger.com"],
-  ["Neon (claim DB)", "Attach live DB so it never expires", "neon.new/database/b45669…"],
+  ["Hostinger VPS", "New dedicated KVM2 for Nakhla — hosts API + Postgres", "hpanel.hostinger.com"],
+  ["Cloudflare R2", "Offsite pgbackrest target + media storage", "dash.cloudflare.com/sign-up"],
   ["Tap Payments", "mada + Apple Pay + BNPL gateway", "register.tap.company/sa"],
   ["Tamara", "Saudi BNPL (direct)", "tamara.co/en-SA/partners"],
   ["Resend", "Transactional email", "resend.com/signup"],
@@ -114,7 +115,7 @@ export default function Page() {
         <p className="sub">
           Everything shipped this session — live deployments, competitive standing, costs, and what comes next.
         </p>
-        <p className="meta">Generated 2 July 2026 · web + admin + API + Postgres live on Vercel</p>
+        <p className="meta">Generated 5 July 2026 · web + admin + API live · Postgres moving off Neon → self-host on KSA VPS</p>
 
         <div className="stats">
           <div className="stat"><div className="n">4</div><div className="l">Services live</div></div>
@@ -219,7 +220,35 @@ export default function Page() {
         </div>
       </Section>
 
-      <Section k="07" title="Next steps" note="Top four are buildable now with no external accounts.">
+      <Section k="07" title="Database strategy — dropping Neon" note="Decision this session: self-host Postgres on the Nakhla VPS, not Neon. Compliance, latency, and cost all point the same direction.">
+        <div className="callout">
+          <h3>Why not Neon</h3>
+          <p style={{ marginBottom: 10 }}>
+            <strong>KSA data residency (PDPL).</strong> Neon has no region in the Kingdom — US/EU/Singapore only. VPS in KSA
+            keeps personal data inside the border by default.
+          </p>
+          <p style={{ marginBottom: 10 }}>
+            <strong>Co-located with API.</strong> API is moving to the same Hostinger VPS — Postgres over a localhost socket
+            is faster than any managed provider, and there&apos;s no egress bill for high-frequency queries.
+          </p>
+          <p>
+            <strong>Cost.</strong> Neon Launch is $19/mo once past the free tier. Postgres on the existing KVM2 is $0
+            marginal. At the scales Nakhla is targeting the self-hosted line stays flat.
+          </p>
+        </div>
+        <div className="callout" style={{ marginTop: 16 }}>
+          <h3>Self-host checklist (on VPS provisioning)</h3>
+          <p>
+            <code>apt install postgresql-16 pgbackrest</code> · bind to <code>127.0.0.1</code> only (never 0.0.0.0) ·
+            UFW allows <code>22/443</code> only · <code>pgbackrest</code> full+incr → <strong>Cloudflare R2</strong> nightly
+            with 30-day PITR window · <code>postgres_exporter</code> → Grafana Cloud free tier for alerts · SCRAM auth,
+            no <code>trust</code>, no <code>md5</code> · schema/seed via existing Prisma migrations. Vercel preview
+            branches can keep a Neon free-tier DB as an isolated PR sandbox — prod stays on the VPS.
+          </p>
+        </div>
+      </Section>
+
+      <Section k="08" title="Next steps" note="Top two unblock everything else — VPS provisioning is now the critical path.">
         <div className="card">
           <table>
             <thead><tr><th className="num">#</th><th>Item</th><th>Readiness</th></tr></thead>
@@ -232,7 +261,7 @@ export default function Page() {
         </div>
       </Section>
 
-      <Section k="08" title="Accounts to create" note="I can&apos;t create accounts or accept terms — create these, then say “connect X” and I take it from the dashboard.">
+      <Section k="09" title="Accounts to create" note="I can&apos;t create accounts or accept terms — create these, then say “connect X” and I take it from the dashboard.">
         <div className="card">
           <table>
             <thead><tr><th>Service</th><th>Purpose</th><th>Where</th></tr></thead>
