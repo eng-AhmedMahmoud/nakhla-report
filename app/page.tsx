@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Kind = "ok" | "warn" | "bad" | "muted" | "brand";
 function Pill({ kind, children }: { kind: Kind; children: React.ReactNode }) {
   return (
@@ -248,7 +250,28 @@ export default function Page() {
         </div>
       </Section>
 
-      <Section k="08" title="Next steps" note="Top two unblock everything else — VPS provisioning is now the critical path.">
+      <Section k="08" title="Full remaining list" note="Every un-shipped area — infra, launch blockers, UX critical fixes, missing pages/components, integrations, polish — with prioritized shipping order.">
+        <div className="callout">
+          <h3>REMAINING.md — companion doc</h3>
+          <p style={{ marginBottom: 12 }}>
+            Everything not yet shipped, ordered by what unblocks the most downstream work. Source of truth for the
+            4–6 week path to a legally-launchable MVP in KSA. Covers infra (§0), payments + auth + KSA compliance
+            (§1), mobile-first UX fixes (§2), 13 missing pages (§3), 13 components + 12 schema models (§4), 14
+            integrations (§5), 16 polish items (§6).
+          </p>
+          <p>
+            <Link href="/remaining" style={{ fontWeight: 700, marginInlineEnd: 18 }}>Read the full list →</Link>
+            <a
+              href="https://github.com/eng-AhmedMahmoud/nakhla-report/blob/main/REMAINING.md"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontWeight: 700 }}
+            >View on GitHub ↗</a>
+          </p>
+        </div>
+      </Section>
+
+      <Section k="09" title="Next steps — critical path" note="Top two unblock everything else — VPS provisioning is now the critical path.">
         <div className="card">
           <table>
             <thead><tr><th className="num">#</th><th>Item</th><th>Readiness</th></tr></thead>
@@ -261,7 +284,7 @@ export default function Page() {
         </div>
       </Section>
 
-      <Section k="09" title="Accounts to create" note="I can&apos;t create accounts or accept terms — create these, then say “connect X” and I take it from the dashboard.">
+      <Section k="10" title="Accounts to create" note="I can&apos;t create accounts or accept terms — create these, then say “connect X” and I take it from the dashboard.">
         <div className="card">
           <table>
             <thead><tr><th>Service</th><th>Purpose</th><th>Where</th></tr></thead>

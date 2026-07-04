@@ -110,6 +110,45 @@ code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px
 /* Footer */
 footer { border-top: 1px solid var(--border); margin-top: 60px; padding: 28px 0 60px; color: var(--muted); font-size: 13px; text-align: center; }
 
+/* Rendered markdown */
+.md { color: var(--fg); font-size: 15.5px; line-height: 1.75; padding-bottom: 40px; }
+.md h1 { font-size: 30px; font-weight: 900; margin: 36px 0 14px; letter-spacing: -0.01em; }
+.md h2 { font-size: 22px; font-weight: 800; margin: 42px 0 12px; padding-top: 22px; border-top: 1px solid var(--border); color: var(--brand-2); }
+.md h3 { font-size: 17px; font-weight: 800; margin: 26px 0 8px; color: var(--fg); }
+.md h4 { font-size: 15px; font-weight: 700; margin: 22px 0 6px; color: var(--muted); }
+.md p { margin: 10px 0; color: var(--fg); }
+.md ul, .md ol { margin: 12px 0 12px 22px; }
+.md li { margin: 6px 0; }
+.md li::marker { color: var(--brand-2); }
+.md a { color: var(--brand-2); text-decoration: none; border-bottom: 1px dotted rgba(52,211,153,0.4); }
+.md a:hover { border-bottom-style: solid; }
+.md strong { color: var(--fg); font-weight: 800; }
+.md code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px; color: var(--accent);
+  background: rgba(245,196,81,0.08); padding: 1.5px 6px; border-radius: 6px;
+  border: 1px solid rgba(245,196,81,0.14);
+}
+.md pre { background: var(--bg-2); border: 1px solid var(--border); padding: 14px 16px; border-radius: 12px; overflow-x: auto; }
+.md pre code { background: none; border: none; padding: 0; }
+.md blockquote {
+  border-inline-start: 3px solid var(--brand-2);
+  padding: 8px 14px; margin: 14px 0; color: var(--muted);
+  background: rgba(15,178,122,0.05); border-radius: 8px;
+  font-size: 14.5px;
+}
+.md blockquote p { color: var(--muted); margin: 4px 0; }
+.md hr { border: none; border-top: 1px solid var(--border); margin: 34px 0; }
+.md table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 14px 0 22px;
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.md thead th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+.md tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.md tbody tr:last-child td { border-bottom: none; }
+
 @media (max-width: 720px) {
   .stats { grid-template-columns: repeat(2, 1fr); }
   .card { overflow-x: auto; }
